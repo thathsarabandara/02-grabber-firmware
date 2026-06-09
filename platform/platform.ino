@@ -4,6 +4,7 @@
 #include "src/modules/servo_control/ServoController.h"
 #include "src/modules/motion/MotionManager.h"
 #include "src/modules/joystick/JoystickHandler.h"
+#include "src/modules/bluetooth/BluetoothHandler.h"
 
 // ======================================================
 // GLOBAL INSTANCES
@@ -11,6 +12,7 @@
 ServoController servoCtrl(PCA9685_ADDR);
 MotionManager   motion(servoCtrl);
 JoystickHandler joysticks(motion);
+BluetoothHandler ble(motion);
 
 // ======================================================
 // DEBUG UTILITIES
@@ -41,6 +43,9 @@ void setup() {
     // Initialize Motion System (calls servoCtrl.begin and startup sequence)
     motion.begin();
     
+    // Initialize BLE Server
+    ble.begin();
+    
     Serial.println("System initialized and ready.");
 }
 
@@ -48,8 +53,10 @@ void setup() {
 // MAIN LOOP
 // ======================================================
 void loop() {
-    // 1. Process Input
-    joysticks.readAndProcess();
+    // 1. Process Input (Only read physical joysticks if no BLE client is overriding)
+    if (!ble.isConnected()) {
+        joysticks.readAndProcess();
+    }
     
     // 2. Update Motion (Smoothing and Servo writing)
     motion.update();
