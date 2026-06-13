@@ -5,6 +5,7 @@
 #include "src/modules/motion/MotionManager.h"
 #include "src/modules/joystick/JoystickHandler.h"
 #include "src/modules/bluetooth/BluetoothHandler.h"
+#include "src/modules/network/RobotNetwork.h"
 
 // ======================================================
 // GLOBAL INSTANCES
@@ -13,6 +14,7 @@ ServoController servoCtrl(PCA9685_ADDR);
 MotionManager   motion(servoCtrl);
 JoystickHandler joysticks(motion);
 BluetoothHandler ble(motion);
+RobotNetwork   network(motion);
 
 // ======================================================
 // DEBUG UTILITIES
@@ -46,6 +48,9 @@ void setup() {
     // Initialize BLE Server
     ble.begin();
     
+    // Initialize WiFi, MQTT and HTTP Registration
+    network.begin();
+    
     Serial.println("System initialized and ready.");
 }
 
@@ -53,7 +58,14 @@ void setup() {
 // MAIN LOOP
 // ======================================================
 void loop() {
-    // 1. Process Input (Only read physical joysticks if no BLE client is overriding)
+    // 1. Keep Network (MQTT) alive
+    network.update();
+
+    // 2. Process Input (Priority: MQTT > BLE > Joystick)
+    // If MQTT is connected, it can override local controls. 
+    // Let's allow Joystick if NO BLE client and NO recent MQTT commands.
+    // For simplicity,don't read joystick if BLE is connected or MQTT is actively controlling.
+    // We'll read joystick only if BLE is not connected. MQTT commands just set target directly via callback.
     if (!ble.isConnected()) {
         joysticks.readAndProcess();
     }

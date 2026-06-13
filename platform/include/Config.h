@@ -66,4 +66,27 @@ struct ServoData {
     int maxAngle;
 };
 
+// ======================================================
+// NETWORK SETTINGS
+// ======================================================
+// Fallback WiFi credentials if WiFiManager fails
+#define FALLBACK_WIFI_SSID      "TP-Link_D664"
+#define FALLBACK_WIFI_PASSWORD  "Bandara@2001"
+
+// API Gateway config
+// Note: ESP32 needs the IP address of the machine running the API Gateway, not localhost
+#define API_REGISTER_URL        "http://192.168.1.100:8000/api/v1/robots/register"
+
+// MQTT Broker config
+#define MQTT_BROKER             "192.168.1.100"
+#define MQTT_PORT               1883
+#define MQTT_USER               "thathsara"
+#define MQTT_PASS               "BandaPutha"
+
+// ======================================================
+// ROBOT IDENTITY
+// ======================================================
+#define ROBOT_ID                "GRABBER-V1-ESP32"
+#define SERIAL_KEY              "1234-5678-9012-3456"
+
 #endif // CONFIG_H
