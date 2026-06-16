@@ -14,6 +14,7 @@
 // ======================================================
 // JOYSTICK PINS (ESP32 ADC)
 // ======================================================
+#define USE_JOYSTICK    false   // Set to true if physical joysticks are connected
 #define JOY1_X          32
 #define JOY1_Y          33
 #define JOY2_X          34
