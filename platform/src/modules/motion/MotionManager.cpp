@@ -2,7 +2,7 @@
 #include "../safety/SafetySystem.h"
 
 MotionManager::MotionManager(ServoController& controller) 
-    : _controller(controller), _smoothFactor(DEFAULT_SMOOTH_FACTOR) 
+    : _controller(controller), _smoothFactor(DEFAULT_SMOOTH_FACTOR), _emergencyStop(false) 
 {
     // Initialize servo data with home positions and limits
     _servos[0] = {BASE_SERVO, BASE_HOME, BASE_HOME, BASE_MIN, BASE_MAX};
@@ -17,6 +17,7 @@ void MotionManager::begin() {
 }
 
 void MotionManager::update() {
+    if (_emergencyStop) return;
     for (int i = 0; i < 4; i++) {
         float error = _servos[i].targetAngle - _servos[i].currentAngle;
 
@@ -28,6 +29,7 @@ void MotionManager::update() {
 }
 
 void MotionManager::setTarget(int servoIndex, float newTarget) {
+    if (_emergencyStop) return;
     if (servoIndex < 0 || servoIndex >= 4) return;
     
     _servos[servoIndex].targetAngle = constrain(
@@ -38,6 +40,7 @@ void MotionManager::setTarget(int servoIndex, float newTarget) {
 }
 
 void MotionManager::moveJoint(int servoIndex, float intensity) {
+    if (_emergencyStop) return;
     if (servoIndex < 0 || servoIndex >= 4) return;
     
     float direction = (intensity > 0) ? 1.0f : -1.0f;
@@ -61,6 +64,24 @@ float MotionManager::getTarget(int servoIndex) const {
 
 float MotionManager::getCurrent(int servoIndex) const {
     return (servoIndex >= 0 && servoIndex < 4) ? _servos[servoIndex].currentAngle : 0;
+}
+
+bool MotionManager::isMoving() const {
+    for (int i = 0; i < 4; i++) {
+        float error = _servos[i].targetAngle - _servos[i].currentAngle;
+        if (abs(error) > 0.05f) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void MotionManager::setEmergencyStop(bool stop) {
+    _emergencyStop = stop;
+}
+
+bool MotionManager::isEmergencyStop() const {
+    return _emergencyStop;
 }
 
 void MotionManager::startupSequence() {

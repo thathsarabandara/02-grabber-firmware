@@ -15,12 +15,17 @@ public:
     float getTarget(int servoIndex) const;
     float getCurrent(int servoIndex) const;
     
+    bool isMoving() const;
+    void setEmergencyStop(bool stop);
+    bool isEmergencyStop() const;
+    
     void startupSequence();
 
 private:
     ServoController& _controller;
     ServoData _servos[4];
     float _smoothFactor;
+    bool _emergencyStop;
 };
 
 #endif // MOTION_MANAGER_H
