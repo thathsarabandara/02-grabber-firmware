@@ -57,6 +57,14 @@ const int   JOYSTICK_DEADZONE     = 180;
 const int   JOYSTICK_CENTER       = 2048;
 
 // ======================================================
+// POWER / BATTERY SETTINGS
+// ======================================================
+#define INA226_ADDR             0x41  // Note: default 0x40 conflicts with PCA9685! Solder A0 pad on INA226.
+#define BATTERY_VOLTAGE_MAX     8.4f  // 2S LiPo max
+#define BATTERY_VOLTAGE_MIN     6.0f  // 2S LiPo safe min
+#define BATTERY_CAPACITY_MAH    1800.0f // 2x 18650 in Series
+
+// ======================================================
 // DATA STRUCTURES
 // ======================================================
 struct ServoData {
