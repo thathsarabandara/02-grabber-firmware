@@ -6,6 +6,7 @@
 #include "src/modules/joystick/JoystickHandler.h"
 #include "src/modules/bluetooth/BluetoothHandler.h"
 #include "src/modules/network/RobotNetwork.h"
+#include "src/modules/power/PowerMonitor.h"
 
 // ======================================================
 // GLOBAL INSTANCES
@@ -29,6 +30,19 @@ void printState() {
             motion.getCurrent(2),
             motion.getCurrent(3)
         );
+        if (powerMonitor.isDetected()) {
+            Serial.printf("Power: %.2fV | %.2fmA (Peak: %.2fmA) | %.2fmW | %.3fWh | %.1f%% (%.1fmins left)\n",
+                powerMonitor.getVoltage(),
+                powerMonitor.getCurrent(),
+                powerMonitor.getPeakCurrent(),
+                powerMonitor.getPower(),
+                powerMonitor.getEnergyWh(),
+                powerMonitor.getRemainingCapacityPercent(),
+                powerMonitor.getRuntimePredictionMins()
+            );
+        } else {
+            Serial.println("Power: INA226 NOT DETECTED! Check I2C bus wiring/address.");
+        }
     }
 }
 
@@ -50,6 +64,9 @@ void setup() {
     
     // Initialize WiFi, MQTT and HTTP Registration
     network.begin();
+    
+    // Initialize Power Monitor
+    powerMonitor.begin();
     
     Serial.println("System initialized and ready.");
 }
@@ -73,9 +90,12 @@ void loop() {
     // 2. Update Motion (Smoothing and Servo writing)
     motion.update();
     
-    // 3. Debug Output
+    // 3. Update Power Monitor
+    powerMonitor.update(motion.isMoving());
+    
+    // 4. Debug Output
     printState();
     
-    // 4. Rate Limiting
+    // 5. Rate Limiting
     delay(UPDATE_DELAY_MS);
 }
