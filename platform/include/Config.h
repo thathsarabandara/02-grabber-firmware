@@ -59,10 +59,10 @@ const int   JOYSTICK_CENTER       = 2048;
 // ======================================================
 // POWER / BATTERY SETTINGS
 // ======================================================
-#define INA226_ADDR             0x41  // Note: default 0x40 conflicts with PCA9685! Solder A0 pad on INA226.
-#define BATTERY_VOLTAGE_MAX     8.4f  // 2S LiPo max
-#define BATTERY_VOLTAGE_MIN     6.0f  // 2S LiPo safe min
-#define BATTERY_CAPACITY_MAH    1800.0f // 2x 18650 in Series
+#define INA226_ADDR             0x44  // Note: default 0x40 conflicts with PCA9685! Solder A0 pad on INA226.
+#define BATTERY_VOLTAGE_MAX     13.4f  // 3S Li-ion max
+#define BATTERY_VOLTAGE_MIN     9.0f   // 3S Li-ion safe min
+#define BATTERY_CAPACITY_MAH    1800.0f // 3x 18650 in Series
 
 // ======================================================
 // DATA STRUCTURES
@@ -84,10 +84,10 @@ struct ServoData {
 
 // API Gateway config
 // Note: ESP32 needs the IP address of the machine running the API Gateway, not localhost
-#define API_REGISTER_URL        "http://192.168.1.100:8000/api/v1/robots/register"
+#define API_REGISTER_URL        "http://192.168.1.101:8000/api/v1/robots/register"
 
 // MQTT Broker config
-#define MQTT_BROKER             "192.168.1.100"
+#define MQTT_BROKER             "192.168.1.101"
 #define MQTT_PORT               1883
 #define MQTT_USER               "thathsara"
 #define MQTT_PASS               "BandaPutha"
