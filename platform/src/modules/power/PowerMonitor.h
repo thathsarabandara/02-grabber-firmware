@@ -22,6 +22,7 @@ public:
     float getEnergyWh() const;
     float getRemainingCapacityPercent() const;
     float getRuntimePredictionMins() const;
+    bool isDetected() const;
 
 private:
     INA226_WE _ina;

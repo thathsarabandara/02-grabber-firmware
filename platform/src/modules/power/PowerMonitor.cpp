@@ -8,6 +8,25 @@ PowerMonitor::PowerMonitor() : _ina(INA226_ADDR), _voltage(0), _current_mA(0), _
 }
 
 void PowerMonitor::begin() {
+    Serial.println("Scanning I2C bus...");
+    byte error, address;
+    int nDevices = 0;
+    for (address = 1; address < 127; address++) {
+        Wire.beginTransmission(address);
+        error = Wire.endTransmission();
+        if (error == 0) {
+            Serial.printf("I2C device found at address 0x%02X\n", address);
+            nDevices++;
+        } else if (error == 4) {
+            Serial.printf("Unknown error at address 0x%02X\n", address);
+        }
+    }
+    if (nDevices == 0) {
+        Serial.println("No I2C devices found! Check connections.");
+    } else {
+        Serial.printf("I2C scan complete. Found %d device(s).\n", nDevices);
+    }
+
     Serial.println("Initializing INA226 Power Monitor...");
     if (!_ina.init()) {
         Serial.println("Failed to find INA226! Check wiring and I2C address.");
@@ -31,7 +50,7 @@ void PowerMonitor::update(bool isMoving) {
     _ina.readAndClearFlags();
     _voltage = _ina.getBusVoltage_V();
     _current_mA = _ina.getCurrent_mA();
-    _power_mW = _ina.getBusPower_mW();
+    _power_mW = _ina.getBusPower();
     
     // Update Peak Current
     if (_current_mA > _peakCurrent) {
@@ -83,4 +102,8 @@ float PowerMonitor::getRuntimePredictionMins() const {
     
     float hours = remainingCapacity_mAh / avgCurrent;
     return hours * 60.0f;
+}
+
+bool PowerMonitor::isDetected() const {
+    return _inaFound;
 }
