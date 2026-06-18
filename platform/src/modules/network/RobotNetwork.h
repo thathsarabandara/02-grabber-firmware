@@ -36,6 +36,7 @@ private:
     
     unsigned long _lastReconnectAttempt;
     unsigned long _lastHeartbeat;
+    unsigned long _lastTelemetry;
     RobotState _currentState;
     
     void setupWiFi();
@@ -43,6 +44,7 @@ private:
     void connectMQTT();
     void publishStatus(const char* status);
     void publishHeartbeat();
+    void publishTelemetry();
     const char* stateToString(RobotState state) const;
     
     void handleMessage(char* topic, byte* payload, unsigned int length);

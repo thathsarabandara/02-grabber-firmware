@@ -1,9 +1,10 @@
 #include "RobotNetwork.h"
+#include "../power/PowerMonitor.h"
 
 RobotNetwork* RobotNetwork::_instance = nullptr;
 
 RobotNetwork::RobotNetwork(MotionManager& motion) 
-    : _motion(motion), _mqttClient(_wifiClient), _lastReconnectAttempt(0), _lastHeartbeat(0), _currentState(OFFLINE) {
+    : _motion(motion), _mqttClient(_wifiClient), _lastReconnectAttempt(0), _lastHeartbeat(0), _lastTelemetry(0), _currentState(OFFLINE) {
     _instance = this;
 }
 
@@ -13,6 +14,7 @@ void RobotNetwork::begin() {
         registerRobot();
         _mqttClient.setServer(MQTT_BROKER, MQTT_PORT);
         _mqttClient.setCallback(RobotNetwork::mqttCallbackWrapper);
+        _mqttClient.setBufferSize(512); // Increase buffer size for large JSON payloads
         connectMQTT();
     }
 }
@@ -146,6 +148,40 @@ void RobotNetwork::publishHeartbeat() {
     }
 }
 
+void RobotNetwork::publishTelemetry() {
+    if (_mqttClient.connected()) {
+        String telemetryTopic = String("robot/") + ROBOT_ID + "/telemetry";
+        
+        // We use a larger document as we'll be adding many fields
+        StaticJsonDocument<512> doc;
+        doc["robotId"] = ROBOT_ID;
+        doc["timestamp"] = 0; // Server overrides
+        
+        // Motion metrics
+        JsonObject angles = doc.createNestedObject("angles");
+        angles["base"] = _motion.getCurrent(0);
+        angles["shoulder"] = _motion.getCurrent(1);
+        angles["elbow"] = _motion.getCurrent(2);
+        angles["grip"] = _motion.getCurrent(3);
+        
+        // Power metrics
+        JsonObject power = doc.createNestedObject("power");
+        power["voltage"] = powerMonitor.getVoltage();
+        power["current"] = powerMonitor.getCurrent();
+        power["power"] = powerMonitor.getPower();
+        power["peakCurrent"] = powerMonitor.getPeakCurrent();
+        power["idleCurrent"] = powerMonitor.getIdleCurrent();
+        power["movingCurrent"] = powerMonitor.getMovingCurrent();
+        power["energyWh"] = powerMonitor.getEnergyWh();
+        power["remainingCapacity"] = powerMonitor.getRemainingCapacityPercent();
+        power["runtimeMins"] = powerMonitor.getRuntimePredictionMins();
+        
+        String payload;
+        serializeJson(doc, payload);
+        _mqttClient.publish(telemetryTopic.c_str(), payload.c_str());
+    }
+}
+
 void RobotNetwork::transitionToState(RobotState newState) {
     if (_currentState == newState) return;
     
@@ -219,6 +255,12 @@ void RobotNetwork::update() {
         if (now - _lastHeartbeat > 5000) {
             _lastHeartbeat = now;
             publishHeartbeat();
+        }
+        
+        // Telemetry periodic loop (every 1 second)
+        if (now - _lastTelemetry > 1000) {
+            _lastTelemetry = now;
+            publishTelemetry();
         }
         
         // Auto transition IDLE/MOVING based on physical activity
