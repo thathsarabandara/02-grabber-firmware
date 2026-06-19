@@ -60,6 +60,8 @@ const int   JOYSTICK_CENTER       = 2048;
 // POWER / BATTERY SETTINGS
 // ======================================================
 #define INA226_ADDR             0x44  // Note: default 0x40 conflicts with PCA9685! Solder A0 pad on INA226.
+#define INA226_SHUNT_RESISTOR   0.1f  // Typical shunt resistor on breakout boards (0.1 Ohm / R100)
+#define INA226_MAX_CURRENT      4.0f  // Maximum expected load current in Amps
 #define BATTERY_VOLTAGE_MAX     13.4f  // 3S Li-ion max
 #define BATTERY_VOLTAGE_MIN     9.0f   // 3S Li-ion safe min
 #define BATTERY_CAPACITY_MAH    1800.0f // 3x 18650 in Series

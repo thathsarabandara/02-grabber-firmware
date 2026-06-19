@@ -34,6 +34,9 @@ void PowerMonitor::begin() {
         return;
     }
     
+    // Set shunt resistor value and max expected current for calibration
+    _ina.setResistorRange(INA226_SHUNT_RESISTOR, INA226_MAX_CURRENT);
+    
     _inaFound = true;
     _ina.waitUntilConversionCompleted(); // Wait for first conversion
     _lastUpdateMs = millis();
