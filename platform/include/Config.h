@@ -86,7 +86,7 @@ struct ServoData {
 
 // API Gateway config
 // Note: ESP32 needs the IP address of the machine running the API Gateway, not localhost
-#define API_REGISTER_URL        "http://192.168.58.1:8000/api/v1/robots/register"
+#define API_REGISTER_URL        "http://192.168.1.103:8000/api/v1/robots/register"
 
 // MQTT Broker config
 #define MQTT_BROKER             "192.168.1.103"
