@@ -35,13 +35,13 @@
 #define BASE_MAX        180
 #define BASE_HOME       90
 
-#define SHOULDER_MIN    40
-#define SHOULDER_MAX    120
-#define SHOULDER_HOME   90
+#define SHOULDER_MIN    50
+#define SHOULDER_MAX    150
+#define SHOULDER_HOME   100
 
 #define ELBOW_MIN       20
-#define ELBOW_MAX       80
-#define ELBOW_HOME      50
+#define ELBOW_MAX       100
+#define ELBOW_HOME      60
 
 #define GRIPPER_MIN     70
 #define GRIPPER_MAX     100
