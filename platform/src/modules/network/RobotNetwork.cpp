@@ -110,6 +110,7 @@ void RobotNetwork::connectMQTT() {
         String homeTopic = String("robot/") + ROBOT_ID + "/commands/home";
         String openGripperTopic = String("robot/") + ROBOT_ID + "/commands/open-gripper";
         String closeGripperTopic = String("robot/") + ROBOT_ID + "/commands/close-gripper";
+        String executePoseTopic = String("robot/") + ROBOT_ID + "/commands/execute-pose";
         
         _mqttClient.subscribe(moveTopic.c_str());
         _mqttClient.subscribe(estopTopic.c_str());
@@ -117,6 +118,7 @@ void RobotNetwork::connectMQTT() {
         _mqttClient.subscribe(homeTopic.c_str());
         _mqttClient.subscribe(openGripperTopic.c_str());
         _mqttClient.subscribe(closeGripperTopic.c_str());
+        _mqttClient.subscribe(executePoseTopic.c_str());
         
         Serial.println("Subscribed to command topics.");
     } else {
@@ -322,6 +324,37 @@ void RobotNetwork::handleMessage(char* topic, byte* payload, unsigned int length
         return;
     }
     
+    if (topicStr.endsWith("/commands/execute-pose")) {
+        if (_currentState == EMERGENCY_STOP || _currentState == ERROR_STATE) {
+            Serial.println("MQTT Execute Pose command ignored: safety/error lock active.");
+            return;
+        }
+        
+        StaticJsonDocument<256> doc;
+        DeserializationError error = deserializeJson(doc, payload, length);
+        
+        if (error) {
+            Serial.print(F("deserializeJson() failed for execute-pose: "));
+            Serial.println(error.f_str());
+            return;
+        }
+        
+        if (doc.containsKey("j1")) {
+            _motion.setTarget(0, doc["j1"].as<float>());
+        }
+        if (doc.containsKey("j2")) {
+            _motion.setTarget(1, doc["j2"].as<float>());
+        }
+        if (doc.containsKey("j3")) {
+            _motion.setTarget(2, doc["j3"].as<float>());
+        }
+        if (doc.containsKey("j4")) {
+            _motion.setTarget(3, doc["j4"].as<float>());
+        }
+        Serial.println("MQTT Command: Execute Pose completed.");
+        return;
+    }
+
     if (topicStr.endsWith("/commands/move")) {
         if (_currentState == EMERGENCY_STOP || _currentState == ERROR_STATE) {
             Serial.println("MQTT Move command ignored: safety/error lock active.");

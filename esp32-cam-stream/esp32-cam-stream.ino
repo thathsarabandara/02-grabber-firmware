@@ -13,12 +13,30 @@
 const char* ssid = "TP-Link_D664";
 const char* password = "Bandara@2001";
 
+// ==========================================
+// Static IP Configuration
+// ==========================================
+#define STATIC_IP_ENABLED true
+
+#if STATIC_IP_ENABLED
+IPAddress local_IP(192, 168, 1, 100);
+IPAddress gateway(192, 168, 1, 1);
+IPAddress subnet(255, 255, 255, 0);
+IPAddress dns(192, 168, 1, 1);
+#endif
+
 #include "soc/soc.h"
 #include "soc/rtc_cntl_reg.h"
 
 void startCameraServer();
 
 void setup() {
+#if STATIC_IP_ENABLED
+  if (!WiFi.config(local_IP, gateway, subnet, dns)) {
+    Serial.println("STA Failed to configure Static IP");
+  }
+#endif
+
   WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // Disable brownout detector
   Serial.begin(115200);
   Serial.setDebugOutput(true);

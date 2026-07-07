@@ -35,13 +35,13 @@
 #define BASE_MAX        180
 #define BASE_HOME       90
 
-#define SHOULDER_MIN    40
-#define SHOULDER_MAX    120
-#define SHOULDER_HOME   90
+#define SHOULDER_MIN    50
+#define SHOULDER_MAX    150
+#define SHOULDER_HOME   100
 
 #define ELBOW_MIN       20
-#define ELBOW_MAX       80
-#define ELBOW_HOME      50
+#define ELBOW_MAX       100
+#define ELBOW_HOME      60
 
 #define GRIPPER_MIN     70
 #define GRIPPER_MAX     100
@@ -62,9 +62,9 @@ const int   JOYSTICK_CENTER       = 2048;
 #define INA226_ADDR             0x44  // Note: default 0x40 conflicts with PCA9685! Solder A0 pad on INA226.
 #define INA226_SHUNT_RESISTOR   0.1f  // Typical shunt resistor on breakout boards (0.1 Ohm / R100)
 #define INA226_MAX_CURRENT      4.0f  // Maximum expected load current in Amps
-#define BATTERY_VOLTAGE_MAX     13.4f  // 3S Li-ion max
-#define BATTERY_VOLTAGE_MIN     9.0f   // 3S Li-ion safe min
-#define BATTERY_CAPACITY_MAH    1800.0f // 3x 18650 in Series
+#define BATTERY_VOLTAGE_MAX     8.4f   // 2S Li-ion max
+#define BATTERY_VOLTAGE_MIN     6.0f   // 2S Li-ion safe min
+#define BATTERY_CAPACITY_MAH    1800.0f // 2x 18650 in Series
 
 // ======================================================
 // DATA STRUCTURES
@@ -86,10 +86,10 @@ struct ServoData {
 
 // API Gateway config
 // Note: ESP32 needs the IP address of the machine running the API Gateway, not localhost
-#define API_REGISTER_URL        "http://192.168.1.101:8000/api/v1/robots/register"
+#define API_REGISTER_URL        "http://192.168.1.103:8000/api/v1/robots/register"
 
 // MQTT Broker config
-#define MQTT_BROKER             "192.168.1.101"
+#define MQTT_BROKER             "192.168.1.103"
 #define MQTT_PORT               1883
 #define MQTT_USER               "thathsara"
 #define MQTT_PASS               "BandaPutha"
