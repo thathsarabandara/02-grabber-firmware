@@ -8,7 +8,19 @@
 [![Protocols](https://img.shields.io/badge/Protocols-MQTT%20%7C%20BLE%20%7C%20HTTP-green.svg?style=flat-square)]()
 [![Hardware](https://img.shields.io/badge/Hardware-PCA9685%20%7C%20INA226-lightgrey.svg?style=flat-square)]()
 
+
+## 🎥 Video Demonstration
+
+<div align="center">
+  <a href="https://youtu.be/s2zgFPOAeLU?si=avPE3SV8oZcvlSe6">
+    <img src="https://img.youtube.com/vi/s2zgFPOAeLU/maxresdefault.jpg" alt="Grabber Demo Video" width="50%">
+  </a>
+  <br/>
+  <sub>Click the image above to watch the demonstration video on YouTube.</sub>
+</div>
+
 ---
+
 
 ## 🧭 System Architecture
 
