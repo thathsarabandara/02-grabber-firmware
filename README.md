@@ -278,8 +278,8 @@ Install the following libraries via the Arduino Library Manager:
 Before compiling, review and adjust network properties, target values, and calibration metrics inside [Config.h](platform/include/Config.h):
 * **WiFi and API Fallback**:
   ```cpp
-  #define FALLBACK_WIFI_SSID      "TP-Link_D664"
-  #define FALLBACK_WIFI_PASSWORD  "Bandara@2001"
+  #define FALLBACK_WIFI_SSID      "TP-Link"
+  #define FALLBACK_WIFI_PASSWORD  "1234567"
   #define API_REGISTER_URL        "http://192.168.1.103:8000/api/v1/robots/register"
   ```
 * **MQTT Settings**:
